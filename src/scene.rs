@@ -25,7 +25,7 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         point_light: PointLight {
             intensity: 1500.0,
             shadows_enabled: true,
-            ..Default::default()
+            ..default()
         },
         transform: Transform::from_xyz(1.0, 4.0, 0.0),
         ..default()
@@ -39,68 +39,55 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         let mut children_list: Vec<Entity> = Vec::new();
         for i in 0..3 {
             let entity = commands
-                .spawn((
-                    Transform {
+                .spawn(SceneBundle {
+                    scene: asset_server.load("models/road_straight.glb#Scene0"),
+                    transform: Transform {
                         translation: Vec3::new(i as f32, 0.0, 0.0),
                         rotation: Quat::from_rotation_y(FRAC_PI_2),
-                        ..Default::default()
-                    },
-                    GlobalTransform::IDENTITY,
-                ))
-                .with_children(|parent| {
-                    parent.spawn(SceneBundle {
-                        scene: asset_server.load("models/road_straight.glb#Scene0"),
                         ..default()
-                    });
+                    },
+                    ..default()
                 })
                 .id();
+
             children_list.push(entity);
+
             if i == 0 {
                 let lamp = commands
-                    .spawn((
-                        Transform {
+                    .spawn(SceneBundle {
+                        scene: asset_server.load("models/lamp.glb#Scene0"),
+                        transform: Transform {
                             translation: Vec3::new(i as f32 - 0.45, 0.0, 0.0),
                             rotation: Quat::from_rotation_y(FRAC_PI_2),
-                            ..Default::default()
-                        },
-                        GlobalTransform::IDENTITY,
-                    ))
-                    .with_children(|parent| {
-                        parent.spawn(SceneBundle {
-                            scene: asset_server.load("models/lamp.glb#Scene0"),
                             ..default()
-                        });
+                        },
+                        ..default()
                     })
                     .id();
                 children_list.push(lamp);
             }
             if i == 2 {
                 let lamp = commands
-                    .spawn((
-                        Transform {
+                    .spawn(SceneBundle {
+                        scene: asset_server.load("models/lamp.glb#Scene0"),
+                        transform: Transform {
                             translation: Vec3::new(i as f32 + 0.45, 0.0, 0.0),
                             rotation: Quat::from_rotation_y(-FRAC_PI_2),
-                            ..Default::default()
-                        },
-                        GlobalTransform::IDENTITY,
-                    ))
-                    .with_children(|parent| {
-                        parent.spawn(SceneBundle {
-                            scene: asset_server.load("models/lamp.glb#Scene0"),
                             ..default()
-                        });
+                        },
+                        ..default()
                     })
                     .id();
                 children_list.push(lamp);
             }
             commands
-                .spawn((
-                    Transform {
+                .spawn(SpatialBundle {
+                    transform: Transform {
                         translation: Vec3::new(0.0, 0.0, j as f32),
-                        ..Default::default()
+                        ..default()
                     },
-                    GlobalTransform::IDENTITY,
-                ))
+                    ..default()
+                })
                 .insert(Street)
                 .push_children(&children_list);
         }
@@ -108,19 +95,14 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         if j < -1 {
             let ran_street = die.sample(&mut rng);
             commands
-                .spawn((
-                    Transform {
+                .spawn(SceneBundle {
+                    scene: asset_server.load("models/coin.glb#Scene0"),
+                    transform: Transform {
                         translation: Vec3::new(ran_street as f32, 0.0, j as f32),
                         scale: Vec3::new(0.5, 0.5, 0.5),
                         ..Default::default()
                     },
-                    GlobalTransform::IDENTITY,
-                ))
-                .with_children(|parent| {
-                    parent.spawn(SceneBundle {
-                        scene: asset_server.load("models/coin.glb#Scene0"),
-                        ..default()
-                    });
+                    ..default()
                 })
                 .insert(Coin);
         }
@@ -128,19 +110,14 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     //player
     commands
-        .spawn((
-            Transform {
+        .spawn(SceneBundle {
+            scene: asset_server.load("models/taxi.glb#Scene0"),
+            transform: Transform {
                 translation: Vec3::new(1.0, 0.0, 0.0),
                 scale: Vec3::new(0.4, 0.4, 0.4),
-                ..Default::default()
-            },
-            GlobalTransform::IDENTITY,
-        ))
-        .with_children(|parent| {
-            parent.spawn(SceneBundle {
-                scene: asset_server.load("models/taxi.glb#Scene0"),
                 ..default()
-            });
+            },
+            ..default()
         })
         .insert(Player);
 

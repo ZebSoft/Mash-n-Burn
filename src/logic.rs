@@ -47,20 +47,15 @@ pub fn move_street(
                 let die = Uniform::from(0..3);
                 let ran_street = die.sample(&mut rng);
                 commands
-                    .spawn((
-                        Transform {
-                            translation: Vec3::new(ran_street as f32, 0.0, transform.translation.z),
-                            scale: Vec3::new(0.5, 0.5, 0.5),
-                            ..Default::default()
-                        },
-                        GlobalTransform::IDENTITY,
-                    ))
-                    .with_children(|parent| {
-                        parent.spawn(SceneBundle {
+                    .spawn(SceneBundle {
                             scene: asset_server.load("models/coin.glb#Scene0"),
+                            transform: Transform {
+                                translation: Vec3::new(ran_street as f32, 0.0, transform.translation.z),
+                                scale: Vec3::new(0.5, 0.5, 0.5),
+                                ..Default::default()
+                            },
                             ..default()
-                        });
-                    })
+                        })
                     .insert(Coin);
             }
         }
@@ -117,22 +112,16 @@ pub fn spawn_obstacle(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     let model = scene::OBSTACLE_MODELS[rng.gen_range(0..scene::OBSTACLE_MODELS.len())];
     commands
-        .spawn((
-            Transform {
-                translation: Vec3::new(ran_street as f32, 0.0, -10.0),
-                scale: Vec3::new(0.4, 0.4, 0.4),
-                rotation: Quat::from_rotation_y(PI),
-            },
-            GlobalTransform::IDENTITY,
-        ))
-        .with_children(|parent| {
-            parent.spawn(SceneBundle {
+        .spawn(SceneBundle {
                 scene: asset_server.load(model),
+                transform:Transform {
+                    translation: Vec3::new(ran_street as f32, 0.0, -10.0),
+                    scale: Vec3::new(0.4, 0.4, 0.4),
+                    rotation: Quat::from_rotation_y(PI),
+                },
                 ..default()
-            });
         })
         .insert(Obstacle);
-    //println!("{}", model);
 }
 
 const OBSTACLE_SPEED: f32 = 2.0;
