@@ -53,6 +53,7 @@ impl Default for CarDirection {
     }
 }
 
+
 #[derive(Resource, Default)]
 pub struct Game {
     pub time_tracker_counter:f32,

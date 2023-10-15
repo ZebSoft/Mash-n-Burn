@@ -59,7 +59,6 @@ fn main() {
         // Game Over
         .add_systems(Update, game::gameover_keyboard.run_if(in_state(GameState::GameOver)))
         .add_systems(OnEnter(GameState::GameOver), game::show_text)
-        .add_systems(OnExit(GameState::GameOver), game::teardown)
     
         .run();
 }

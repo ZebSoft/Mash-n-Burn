@@ -12,6 +12,10 @@ pub fn update (mut game: ResMut<Game>, time: Res<Time>, mut score: ResMut<Score>
     if game.time_tracker_counter > 1.0f32 {
         game.time_tracker_counter = 0.0f32;
         score.value += (game.engine_speed * 10.0f32).round() as i32;
+
+        if score.value > score.best {
+            score.best = score.value;
+        }
     }
 
     if let Ok(sink) = car_sound_controller.get_single() {

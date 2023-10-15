@@ -1,4 +1,4 @@
-use crate::entities::{self, Besttext, CarSoundMarker, Potato, Cointext, Game, Player, MashMeterText};
+use crate::entities::{self, Besttext, CarSoundMarker, Potato, Cointext, Game, Player, MashMeterText, Score};
 
 use bevy::{prelude::*, audio::VolumeLevel};
 use rand::{distributions::Uniform, prelude::Distribution, Rng};
@@ -15,7 +15,7 @@ pub const OBSTACLE_MODELS: &'static [&'static str] = &[
 
 pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>, 
     mut materials: ResMut<Assets<StandardMaterial>>,
-    mut meshes: ResMut<Assets<Mesh>>, mut game: ResMut<Game>) {
+    mut meshes: ResMut<Assets<Mesh>>, mut game: ResMut<Game>, mut score: ResMut<Score>) {
     game.obstacle_speed = 2.0f32;
     game.street_speed = 1.5f32;
     
@@ -26,6 +26,9 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>,
     game.car_target_x = 1.0f32;
     game.car_rotation = Quat::IDENTITY;
     game.car_position = Vec3::new(1.0f32, 0.0f32, 0.0f32);
+
+    score.mash_meter_counter = 0;
+    score.value = 0;
 
     commands.spawn(AudioBundle {
         source: asset_server.load(format!("audio/hackyattacz2.wav")),

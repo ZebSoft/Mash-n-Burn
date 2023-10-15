@@ -2,12 +2,6 @@ use bevy::prelude::*;
 
 use crate::{entities::*, GameState};
 
-pub fn teardown(mut commands: Commands, entities: Query<Entity>) {
-    for entity in entities.iter() {
-        commands.entity(entity).despawn_recursive();
-    }
-}
-
 pub fn show_text(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
         .spawn(NodeBundle {
@@ -38,10 +32,16 @@ pub fn show_text(mut commands: Commands, asset_server: Res<AssetServer>) {
 pub fn gameover_keyboard(
     mut next_state: ResMut<NextState<GameState>>,
     keyboard_input: Res<Input<KeyCode>>,
+    mut commands: Commands, 
+    entities:  Query<Entity, Or<(With<Node>, With<Camera3d>, With<AudioSink>, With<Obstacle>, With<Player>, With<PointLight>)>>
 ) {
     if !keyboard_input.just_pressed(KeyCode::Space) {
         return;
     }
 
-    next_state.set(GameState::Playing);
+    for entity in entities.iter() {
+        commands.entity(entity).despawn_recursive();
+    }
+
+    next_state.set(GameState::InMenu);
 }
