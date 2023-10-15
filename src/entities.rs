@@ -18,7 +18,7 @@ pub struct Cointext;
 #[derive(Component)]
 pub struct Besttext;
 
-#[derive(Resource)]
+#[derive(Resource, Default)]
 pub struct Score {
     pub value:i32,
     pub best:i32
@@ -27,20 +27,27 @@ pub struct Score {
 #[derive(Component)]
 pub struct CarSoundMarker;
 
-#[derive(Resource, Default)]
-pub struct Game {
-    pub obstacle_speed:f32,
-    pub street_speed:f32,
-    pub engine_speed:f32,
-    pub car_sound: Option<Entity>
+pub enum CarDirection {
+    Center,
+    Left,
+    Right
 }
 
-
-impl Default for Score{
+impl Default for CarDirection {
     fn default() -> Self {
-        Self {
-            value:0,
-            best:0,
-        }
+        CarDirection::Center
     }
+}
+
+#[derive(Resource, Default)]
+pub struct Game {
+    pub obstacle_speed: f32,
+    pub street_speed: f32,
+    pub engine_speed: f32,
+    pub rotation_speed: f32,
+    pub car_position: Vec3,
+    pub car_rotation: Vec3,
+    pub car_direction: CarDirection,
+    pub car_turning_for: f32,
+    pub car_going_straight_for: f32
 }

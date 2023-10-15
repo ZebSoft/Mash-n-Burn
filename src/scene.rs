@@ -16,7 +16,11 @@ pub const OBSTACLE_MODELS: &'static [&'static str] = &[
 pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut game: ResMut<Game>) {
     game.obstacle_speed = 2.0f32;
     game.street_speed = 1.5f32;
+    
+    game.rotation_speed = 0.001f32;
+    
     game.engine_speed = 1.0f32;
+    game.car_rotation = Vec3::ZERO;
 
     commands.spawn((
         AudioBundle {

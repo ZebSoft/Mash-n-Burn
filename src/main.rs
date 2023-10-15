@@ -24,23 +24,27 @@ fn main() {
 
         .init_resource::<Game>()
 
-        .add_plugins(DefaultPlugins)
-        //bevy itself
-        // .add_plugins(DefaultPlugins.set(Window {
-        //     resolution: (400.0, 600.0).into(),
-        //     ...default()
-        // })))
+        .add_plugins(DefaultPlugins.set(
+            WindowPlugin {
+                primary_window: Some(Window { 
+                    resolution: (405.0, 720.0).into(),
+                    resizable: false,
+                    ..default()
+                }),
+                ..default()
+            }
+        ))
 
         .add_state::<GameState>()
         .add_systems(OnEnter(GameState::Playing), scene::setup)
-        .add_systems(Update,(move_car, move_street, move_coin, move_obstacle, collision_coin, collision_obstacle, scoreboard).run_if(in_state(GameState::Playing)))
+        .add_systems(Update,(car::update, street::update, coin::update, obstacle::update, coin::check_collision, obstacle::check_collision, game::scoreboard).run_if(in_state(GameState::Playing)))
 
-        .add_systems(Update, spawn_obstacle.run_if(on_timer(Duration::from_secs_f32(4.0))))
+        .add_systems(Update, obstacle::spawn_obstacle.run_if(on_timer(Duration::from_secs_f32(4.0))))
 
-        .add_systems(Update, gameover_keyboard.run_if(in_state(GameState::GameOver)))
+        .add_systems(Update, game::gameover_keyboard.run_if(in_state(GameState::GameOver)))
         
-        .add_systems(OnEnter(GameState::GameOver), show_text)
-        .add_systems(OnExit(GameState::GameOver), teardown)
+        .add_systems(OnEnter(GameState::GameOver), game::show_text)
+        .add_systems(OnExit(GameState::GameOver), game::teardown)
     
         .run();
 }
