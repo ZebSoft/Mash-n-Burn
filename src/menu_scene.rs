@@ -4,6 +4,16 @@ use crate::GameState;
 pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
 
+    commands.spawn(AudioBundle {
+        source: asset_server.load(format!("audio/Title.ogg")),
+        settings: PlaybackSettings{
+            mode: bevy::audio::PlaybackMode::Once,
+            volume: bevy::audio::Volume::Relative(bevy::audio::VolumeLevel::new(0.25)),
+            ..default()
+        },
+        ..default()
+    });
+
     // root node
     commands
     .spawn(NodeBundle {

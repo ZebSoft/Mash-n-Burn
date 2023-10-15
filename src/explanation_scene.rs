@@ -2,6 +2,12 @@ use bevy::prelude::*;
 use crate::GameState;
 
 pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn(AudioBundle {
+        source: asset_server.load(format!("audio/Explaination.ogg")),
+        settings: PlaybackSettings::ONCE,
+        ..default()
+    });
+
     // root node
     commands
     .spawn(NodeBundle {
@@ -34,8 +40,8 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 \n\nDodge the potato people for as long as you can, as when your mash meter fills up, you will be tried at court for mash murder! 
                 \n\nBe on the lookout for sweet potatoes too, as they will forgive you for your sins agaist mash kind!", 
                 TextStyle {
-                    font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                    font_size: 20.0,
+                    font: asset_server.load("fonts/NunitoSans.ttf"),
+                    font_size: 30.0,
                     color: Color::rgb(0.9, 0.9, 0.9),
                     ..default()
                 }
@@ -111,7 +117,7 @@ pub fn button_system(
 
 pub fn teardown(
     mut commands: Commands, 
-    query: Query<Entity, Or<(With<Node>, With<Camera2d>)>>
+    query: Query<Entity, Or<(With<Node>, With<Camera2d>, With<AudioSink>)>>
 ){    
     for entity in query.iter() {
         commands.entity(entity).despawn_recursive();
