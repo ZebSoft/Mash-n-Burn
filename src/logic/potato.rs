@@ -58,7 +58,7 @@ pub fn check_collision(
 
                 if potato.is_sweet_potato {
                     // Reduce the counter by half of it's size
-                    score.mash_meter_counter -= 5;
+                    score.mash_meter_counter -= 2;
                     score.mash_meter_counter = score.mash_meter_counter.max(0);
 
                     commands.spawn(AudioBundle {
