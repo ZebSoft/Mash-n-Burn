@@ -37,7 +37,7 @@ fn main() {
 
         .add_state::<GameState>()
         .add_systems(OnEnter(GameState::Playing), scene::setup)
-        .add_systems(Update,(car::update, street::update, coin::update, obstacle::update, coin::check_collision, obstacle::check_collision, game::scoreboard).run_if(in_state(GameState::Playing)))
+        .add_systems(Update,(car::update, street::update, coin::update,  coin::check_collision, obstacle::check_collision, game::scoreboard).run_if(in_state(GameState::Playing)))
 
         .add_systems(Update, obstacle::spawn_obstacle.run_if(on_timer(Duration::from_secs_f32(4.0))))
 

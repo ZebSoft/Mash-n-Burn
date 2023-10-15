@@ -17,10 +17,11 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut game: R
     game.obstacle_speed = 2.0f32;
     game.street_speed = 1.5f32;
     
-    game.rotation_speed = 0.001f32;
+    game.rotation_speed = 0.75f32;
     
     game.engine_speed = 1.0f32;
-    game.car_rotation = Vec3::ZERO;
+    game.car_rotation = Quat::IDENTITY;
+    game.car_position = Vec3::new(1.0f32, 0.0f32, 0.0f32);
 
     commands.spawn((
         AudioBundle {

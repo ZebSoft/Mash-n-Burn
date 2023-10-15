@@ -18,8 +18,6 @@ pub fn update(
     }
 }
 
-
-
 pub fn check_collision(
     mut commands: Commands,
     mut score: ResMut<Score>,

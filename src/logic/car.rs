@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use rand::Rng;
 
-use crate::{ entities::*, GameState };
+use crate::entities::*;
 
 pub fn update(
     keyboard_input: Res<Input<KeyCode>>,
@@ -9,34 +9,19 @@ pub fn update(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut game: ResMut<Game>,
-    time: Res<Time>
+    time: Res<Time>,
 ) {
-    let left_rotation = Vec3 {
-        x: 0.0f32,
-        y: 45.0f32,
-        z: 0.0f32,
-    };
-    let right_rotation = Vec3 {
-        x: 0.0f32,
-        y: -45.0f32,
-        z: 0.0f32,
-    };
-    let center = Vec3::ZERO;
+    let left_rotation: Quat = Quat::from_euler(EulerRot::XYZ, 0.0f32, 120.0f32, 0.0f32);
+    let center_rotation: Quat = Quat::from_euler(EulerRot::XYZ, 0.0f32, 0.0f32, 0.0f32);
+    let right_rotation: Quat = Quat::from_euler(EulerRot::XYZ, 0.0f32, -120.0f32, 0.0f32);
 
     let mut rng = rand::thread_rng();
 
     for mut transform in player.iter_mut() {
-        if
-            keyboard_input.just_pressed(KeyCode::Left) ||
-            keyboard_input.just_pressed(KeyCode::Right)
-        {
-            game.car_direction = if keyboard_input.just_pressed(KeyCode::Left) {
-                CarDirection::Left
-            } else {
-                CarDirection::Right
-            };
 
-            game.car_rotation = Vec3::ZERO;
+        if keyboard_input.just_pressed(KeyCode::Left) || keyboard_input.just_pressed(KeyCode::Right)
+        {
+            game.stationary_since = 0.0f32;
 
             let rnd: i32 = rng.gen_range(1..=3);
 
@@ -47,10 +32,24 @@ pub fn update(
             });
         }
 
-        if
-            matches!(game.car_direction, CarDirection::Left) &&
-            keyboard_input.pressed(KeyCode::Left)
+        if (!keyboard_input.pressed(KeyCode::Left) && !keyboard_input.pressed(KeyCode::Right))
+        || (keyboard_input.pressed(KeyCode::Left) && keyboard_input.pressed(KeyCode::Right))
         {
+            game.rotating_since = 0.0f32;
+            game.car_direction = CarDirection::Center;
+        }
+        else if keyboard_input.pressed(KeyCode::Left) {
+            game.car_direction = CarDirection::Left
+        } 
+        else if keyboard_input.pressed(KeyCode::Right) {
+            game.car_direction = CarDirection::Right
+        };
+        
+        if matches!(game.car_direction, CarDirection::Left)
+        {
+            game.rotating_since += time.delta_seconds() * game.rotation_speed;
+            game.rotating_since = game.rotating_since.clamp(0.0f32, 1.0f32);
+
             let mut x = transform.translation.x - 0.03;
 
             if x < 0.0 {
@@ -58,44 +57,34 @@ pub fn update(
             }
 
             game.car_position = Vec3::new(x, transform.translation.y, transform.translation.z);
-            game.car_rotation.lerp(left_rotation, game.car_turning_for);
-        } else if
-            matches!(game.car_direction, CarDirection::Right) &&
-            keyboard_input.pressed(KeyCode::Right)
+            game.car_rotation = game.car_rotation.slerp(left_rotation, game.rotating_since);
+
+        } 
+        
+        if matches!(game.car_direction, CarDirection::Right)
         {
+            game.rotating_since += time.delta_seconds() * game.rotation_speed;
+            game.rotating_since = game.rotating_since.clamp(0.0f32, 1.0f32);
+            
             let mut x = transform.translation.x + 0.03;
             if x > 2.0 {
                 x = 2.0;
             }
 
             game.car_position = Vec3::new(x, transform.translation.y, transform.translation.z);
-            game.car_rotation.lerp(right_rotation, game.car_turning_for);
-        } else if
-            keyboard_input.just_released(KeyCode::Left) ||
-            keyboard_input.just_released(KeyCode::Right)
-        {
-            game.car_rotation.lerp(center, game.car_going_straight_for);
-
-            game.car_going_straight_for += time.delta_seconds() * game.rotation_speed;
-            game.car_going_straight_for = game.car_going_straight_for.max(1.0f32);
-
-            game.car_turning_for = 0.0f32;
-            game.car_direction = CarDirection::Center;
+            game.car_rotation = game.car_rotation.slerp(right_rotation, game.rotating_since);
         }
 
-        if !matches!(game.car_direction, CarDirection::Center) {
-            game.car_turning_for += time.delta_seconds() * game.rotation_speed;
-            game.car_turning_for = game.car_turning_for.max(1.0f32);
-
-            game.car_going_straight_for = 0.0f32;
+        // Rotate towards center
+        if matches!(game.car_direction, CarDirection::Center) {
+            game.stationary_since += time.delta_seconds() * game.rotation_speed;
+            game.stationary_since = game.stationary_since.clamp(0.0f32, 1.0f32);
+            
+            game.car_rotation = game.car_rotation.slerp(center_rotation, game.stationary_since);
         }
 
+        transform.rotation = game.car_rotation;
         transform.translation = game.car_position;
-        transform.rotation = Quat::from_euler(
-            EulerRot::XYZ,
-            game.car_rotation.x,
-            game.car_rotation.y,
-            game.car_rotation.z
-        );
+        
     }
 }

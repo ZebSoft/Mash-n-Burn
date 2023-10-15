@@ -27,6 +27,7 @@ pub struct Score {
 #[derive(Component)]
 pub struct CarSoundMarker;
 
+#[derive(Clone, Copy, Debug)]
 pub enum CarDirection {
     Center,
     Left,
@@ -46,8 +47,8 @@ pub struct Game {
     pub engine_speed: f32,
     pub rotation_speed: f32,
     pub car_position: Vec3,
-    pub car_rotation: Vec3,
+    pub car_rotation: Quat,
+    pub rotating_since: f32,
+    pub stationary_since: f32,
     pub car_direction: CarDirection,
-    pub car_turning_for: f32,
-    pub car_going_straight_for: f32
 }
