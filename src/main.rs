@@ -22,6 +22,7 @@ fn main() {
         .insert_resource(Msaa::default())
         .insert_resource(Score::default())
 
+        .init_resource::<Game>()
 
         .add_plugins(DefaultPlugins)
         //bevy itself

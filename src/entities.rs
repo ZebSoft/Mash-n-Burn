@@ -24,6 +24,18 @@ pub struct Score {
     pub best:i32
 }
 
+#[derive(Component)]
+pub struct CarSoundMarker;
+
+#[derive(Resource, Default)]
+pub struct Game {
+    pub obstacle_speed:f32,
+    pub street_speed:f32,
+    pub engine_speed:f32,
+    pub car_sound: Option<Entity>
+}
+
+
 impl Default for Score{
     fn default() -> Self {
         Self {

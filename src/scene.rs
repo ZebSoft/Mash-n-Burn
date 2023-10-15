@@ -1,6 +1,6 @@
-use crate::entities::{self, Besttext, Coin, Cointext, Player};
+use crate::entities::{self, Besttext, CarSoundMarker, Coin, Cointext, Game, Player};
 
-use bevy::prelude::*;
+use bevy::{prelude::*, audio::VolumeLevel};
 use rand::{distributions::Uniform, prelude::Distribution};
 use std::f32::consts::FRAC_PI_2;
 
@@ -13,10 +13,26 @@ pub const OBSTACLE_MODELS: &'static [&'static str] = &[
     "models/tractor.glb#Scene0",
 ];
 
-pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut game: ResMut<Game>) {
+    game.obstacle_speed = 2.0f32;
+    game.street_speed = 1.5f32;
+    game.engine_speed = 1.0f32;
+
+    commands.spawn((
+        AudioBundle {
+            source: asset_server.load(format!("audio/Engine.wav")),
+            settings: PlaybackSettings {
+                mode: bevy::audio::PlaybackMode::Loop,
+                ..default()
+            },
+            ..default()
+        },
+        CarSoundMarker,
+    ));
+
     //camera
     commands.spawn(Camera3dBundle {
-        transform: Transform::from_xyz(1.0, 6.0, 3.0).looking_at(Vec3::new(1., 0., -2.), Vec3::Y),
+        transform: Transform::from_xyz(1.0, 5.0, 4.0).looking_at(Vec3::new(1., 0., -3.), Vec3::Y),
         ..default()
     });
 
@@ -35,7 +51,7 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     let mut rng = rand::thread_rng();
     let die = Uniform::from(0..3);
 
-    for j in -9..2 {
+    for j in -21..2 {
         let mut children_list: Vec<Entity> = Vec::new();
         for i in 0..3 {
             let entity = commands
