@@ -3,7 +3,7 @@ use std::f32::consts::PI;
 use bevy::prelude::*;
 use rand::{ distributions::Uniform, prelude::Distribution, Rng };
 
-use crate::{ entities::*, scene, GameState };
+use crate::{ entities::*, game_scene, GameState };
 
 pub fn update(
     time: Res<Time>,
@@ -51,7 +51,7 @@ pub fn spawn_obstacle(mut commands: Commands, asset_server: Res<AssetServer>) {
     let die = Uniform::from(0..3);
     let ran_street = die.sample(&mut rng);
 
-    let model = scene::OBSTACLE_MODELS[rng.gen_range(0..scene::OBSTACLE_MODELS.len())];
+    let model = game_scene::OBSTACLE_MODELS[rng.gen_range(0..game_scene::OBSTACLE_MODELS.len())];
     commands
         .spawn(SceneBundle {
             scene: asset_server.load(model),
