@@ -34,7 +34,7 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>,
         source: asset_server.load(format!("audio/hackyattacz2.wav")),
         settings: PlaybackSettings{
             mode: bevy::audio::PlaybackMode::Loop,
-            volume: bevy::audio::Volume::Relative(VolumeLevel::new(0.25)),
+            volume: bevy::audio::Volume::Relative(VolumeLevel::new(0.1)),
             ..default()
         },
         ..default()
@@ -45,7 +45,7 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>,
             source: asset_server.load(format!("audio/Engine.wav")),
             settings: PlaybackSettings {
                 mode: bevy::audio::PlaybackMode::Loop,
-                volume: bevy::audio::Volume::Relative(VolumeLevel::new(0.5)),
+                volume: bevy::audio::Volume::Relative(VolumeLevel::new(0.2)),
                 ..default()
             },
             ..default()

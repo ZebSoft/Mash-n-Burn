@@ -33,7 +33,11 @@ pub fn update(
 
             commands.spawn(AudioBundle {
                 source: asset_server.load(format!("audio/Tyre{rnd}.ogg")),
-                settings: PlaybackSettings::ONCE,
+                settings: PlaybackSettings {
+                    mode: bevy::audio::PlaybackMode::Once,
+                    volume: bevy::audio::Volume::Relative(VolumeLevel::new(0.5)),
+                    ..default()
+                },
                 ..default()
             });
 
