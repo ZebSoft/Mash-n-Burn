@@ -1,8 +1,8 @@
-use crate::entities::{self, Besttext, CarSoundMarker, Coin, Cointext, Game, Player};
+use crate::entities::{self, Besttext, CarSoundMarker, Potato, Cointext, Game, Player, MashMeterText};
 
 use bevy::{prelude::*, audio::VolumeLevel};
-use rand::{distributions::Uniform, prelude::Distribution};
-use std::f32::consts::FRAC_PI_2;
+use rand::{distributions::Uniform, prelude::Distribution, Rng};
+use std::f32::consts::{FRAC_PI_2, PI};
 
 use entities::Street;
 
@@ -13,13 +13,17 @@ pub const OBSTACLE_MODELS: &'static [&'static str] = &[
     "models/tractor.glb#Scene0",
 ];
 
-pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut game: ResMut<Game>) {
+pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>, 
+    mut materials: ResMut<Assets<StandardMaterial>>,
+    mut meshes: ResMut<Assets<Mesh>>, mut game: ResMut<Game>) {
     game.obstacle_speed = 2.0f32;
     game.street_speed = 1.5f32;
     
     game.rotation_speed = 0.75f32;
     
     game.engine_speed = 1.0f32;
+    
+    game.car_target_x = 1.0f32;
     game.car_rotation = Quat::IDENTITY;
     game.car_position = Vec3::new(1.0f32, 0.0f32, 0.0f32);
 
@@ -54,6 +58,7 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut game: R
 
     // street
     let mut rng = rand::thread_rng();
+    let mut potato_rng = rand::thread_rng();
     let die = Uniform::from(0..3);
 
     for j in -21..2 {
@@ -115,17 +120,29 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut game: R
         // coin
         if j < -1 {
             let ran_street = die.sample(&mut rng);
+            
+            let potato_index = rng.gen_range(1..=12);
+            
+            let material = StandardMaterial { 
+                alpha_mode: AlphaMode::Blend,
+                base_color_texture: Some(asset_server.load(format!("images/Potato{potato_index}.png"))),
+                ..default()
+            };
+
             commands
-                .spawn(SceneBundle {
-                    scene: asset_server.load("models/coin.glb#Scene0"),
-                    transform: Transform {
-                        translation: Vec3::new(ran_street as f32, 0.0, j as f32),
-                        scale: Vec3::new(0.5, 0.5, 0.5),
-                        ..Default::default()
-                    },
-                    ..default()
-                })
-                .insert(Coin);
+                .spawn(
+                    PbrBundle {
+                        mesh: meshes.add(shape::Plane::from_size(1.0).into()),
+                        transform: Transform {
+                            translation: Vec3::new(ran_street as f32, 0.5, j as f32),
+                            rotation: Quat::from_euler(EulerRot::XYZ, FRAC_PI_2 - FRAC_PI_2 / 5.0f32, 0.0f32, 0.0f32),
+                            scale: Vec3::new(0.5, 0.5, 0.5),
+                            ..Default::default()
+                        },
+                        material: materials.add(material),
+                        ..default()
+                    })
+                .insert(Potato{..default()});
         }
     }
 
@@ -163,6 +180,7 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut game: R
             ..default()
         })
         .insert(Cointext);
+
     commands
         .spawn(TextBundle {
             text: Text::from_section(
@@ -183,4 +201,25 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut game: R
             ..default()
         })
         .insert(Besttext);
+
+        commands.spawn(TextBundle {
+            text: Text::from_section(
+                "MashoMeter:",
+                TextStyle {
+                    font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                    font_size: 40.0,
+                    color: Color::rgb(0.5, 0.5, 1.0),
+                    ..default()
+                },
+            ),
+            style: Style {
+                position_type: PositionType::Absolute,
+                top: Val::Px(35.0),
+                left: Val::Px(5.0),
+                ..default()
+            },
+            ..default()
+        })
+        .insert(MashMeterText);
+
 }

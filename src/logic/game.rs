@@ -2,18 +2,6 @@ use bevy::prelude::*;
 
 use crate::{entities::*, GameState};
 
-pub fn scoreboard(
-    score: Res<Score>,
-    mut coin_query: Query<(&mut Text, With<Cointext>, Without<Besttext>)>,
-    mut best_query: Query<&mut Text, With<Besttext>>,
-) {
-    let (mut text, _, _) = coin_query.single_mut();
-    text.sections[0].value = format!("Coin: {}", score.value);
-
-    let mut best_text = best_query.single_mut();
-    best_text.sections[0].value = format!("Best: {}", score.best);
-}
-
 pub fn teardown(mut commands: Commands, entities: Query<Entity>) {
     for entity in entities.iter() {
         commands.entity(entity).despawn_recursive();

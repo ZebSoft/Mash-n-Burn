@@ -1,3 +1,5 @@
+use std::f32::consts::FRAC_PI_2;
+
 use bevy::prelude::*;
 use rand::{Rng, distributions::Uniform, prelude::Distribution};
 
@@ -8,6 +10,8 @@ pub fn update(
     mut commands: Commands,
     time: Res<Time>,
     mut position: Query<&mut Transform, With<Street>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+    mut meshes: ResMut<Assets<Mesh>>,
     asset_server: Res<AssetServer>,
     game: Res<Game>,
 ) {
@@ -21,17 +25,32 @@ pub fn update(
             if ran_ < 2 {
                 let die = Uniform::from(0..3);
                 let ran_street = die.sample(&mut rng);
+                
+                let potato_index = rng.gen_range(0..=12);
+
+                // If the index is 0, it's our sweet potato priest!!!
+                let file_name = if potato_index == 0 { format!("images/SweetPotato.png") } else { format!("images/Potato{potato_index}.png") };
+
+                let material = StandardMaterial { 
+                    alpha_mode: AlphaMode::Blend,
+                    base_color_texture: Some(asset_server.load(file_name)),
+                    ..default()
+                };
+    
                 commands
-                    .spawn(SceneBundle {
-                        scene: asset_server.load("models/coin.glb#Scene0"),
-                        transform: Transform {
-                            translation: Vec3::new(ran_street as f32, 0.0, transform.translation.z),
-                            scale: Vec3::new(0.5, 0.5, 0.5),
-                            ..Default::default()
-                        },
-                        ..default()
-                    })
-                    .insert(Coin);
+                    .spawn(
+                        PbrBundle {
+                            mesh: meshes.add(shape::Plane::from_size(1.0).into()),
+                            transform: Transform {
+                                translation: Vec3::new(ran_street as f32, 0.5, transform.translation.z),
+                                rotation: Quat::from_euler(EulerRot::XYZ, FRAC_PI_2 - FRAC_PI_2 / 5.0f32, 0.0f32, 0.0f32),
+                                scale: Vec3::new(0.5, 0.5, 0.5),
+                                ..Default::default()
+                            },
+                            material: materials.add(material),
+                            ..default()
+                        })
+                    .insert(Potato { is_sweet_potato: potato_index == 0, ..default() });
             }
         }
     }

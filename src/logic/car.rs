@@ -21,7 +21,13 @@ pub fn update(
 
         if keyboard_input.just_pressed(KeyCode::Left) || keyboard_input.just_pressed(KeyCode::Right)
         {
+            // You can't switch lanes any further
+            if game.car_target_x == 0.0f32 && keyboard_input.just_pressed(KeyCode::Left) || game.car_target_x == 2.0f32  && keyboard_input.just_pressed(KeyCode::Right) {
+                continue;
+            }
+
             game.stationary_since = 0.0f32;
+            game.rotating_since = 0.0f32;
 
             let rnd: i32 = rng.gen_range(1..=3);
 
@@ -30,49 +36,35 @@ pub fn update(
                 settings: PlaybackSettings::ONCE,
                 ..default()
             });
-        }
 
-        if (!keyboard_input.pressed(KeyCode::Left) && !keyboard_input.pressed(KeyCode::Right))
-        || (keyboard_input.pressed(KeyCode::Left) && keyboard_input.pressed(KeyCode::Right))
-        {
-            game.rotating_since = 0.0f32;
-            game.car_direction = CarDirection::Center;
-        }
-        else if keyboard_input.pressed(KeyCode::Left) {
-            game.car_direction = CarDirection::Left
-        } 
-        else if keyboard_input.pressed(KeyCode::Right) {
-            game.car_direction = CarDirection::Right
-        };
-        
-        if matches!(game.car_direction, CarDirection::Left)
-        {
-            game.rotating_since += time.delta_seconds() * game.rotation_speed;
-            game.rotating_since = game.rotating_since.clamp(0.0f32, 1.0f32);
-
-            let mut x = transform.translation.x - 0.03;
-
-            if x < 0.0 {
-                x = 0.0;
+            if keyboard_input.just_pressed(KeyCode::Left){
+                game.car_direction = CarDirection::Left;
+                game.car_target_x -= 1.0f32;
             }
 
-            game.car_position = Vec3::new(x, transform.translation.y, transform.translation.z);
-            game.car_rotation = game.car_rotation.slerp(left_rotation, game.rotating_since);
+            if keyboard_input.just_pressed(KeyCode::Right){
+                game.car_direction = CarDirection::Right;
+                game.car_target_x += 1.0f32;
+            }
 
-        } 
+            game.car_target_x = game.car_target_x.clamp(0.0f32, 2.0f32);
+        }
         
-        if matches!(game.car_direction, CarDirection::Right)
+        if matches!(game.car_direction, CarDirection::Left) || matches!(game.car_direction, CarDirection::Right)
         {
             game.rotating_since += time.delta_seconds() * game.rotation_speed;
-            game.rotating_since = game.rotating_since.clamp(0.0f32, 1.0f32);
             
-            let mut x = transform.translation.x + 0.03;
-            if x > 2.0 {
-                x = 2.0;
+            // Hack for lerp, it lerps values kinda weird ( it finishes around 180 ms ? ), or I don't have the capacity to understand right now.
+            if game.rotating_since >= 0.15f32 {
+                game.car_direction = CarDirection::Center;
+                continue;
             }
 
-            game.car_position = Vec3::new(x, transform.translation.y, transform.translation.z);
-            game.car_rotation = game.car_rotation.slerp(right_rotation, game.rotating_since);
+            let target_position = Vec3::new(game.car_target_x, game.car_position.y, game.car_position.z);
+            let target_rotation = if matches!(game.car_direction, CarDirection::Left) { left_rotation } else { right_rotation };
+
+            game.car_position = game.car_position.lerp(target_position, game.rotating_since * 1.1f32);
+            game.car_rotation = game.car_rotation.lerp(target_rotation, game.rotating_since);
         }
 
         // Rotate towards center
@@ -80,11 +72,10 @@ pub fn update(
             game.stationary_since += time.delta_seconds() * game.rotation_speed;
             game.stationary_since = game.stationary_since.clamp(0.0f32, 1.0f32);
             
-            game.car_rotation = game.car_rotation.slerp(center_rotation, game.stationary_since);
+            game.car_rotation = game.car_rotation.lerp(center_rotation, game.stationary_since);
         }
 
         transform.rotation = game.car_rotation;
         transform.translation = game.car_position;
-        
     }
 }
