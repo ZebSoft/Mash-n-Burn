@@ -27,11 +27,22 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>,
     game.car_rotation = Quat::IDENTITY;
     game.car_position = Vec3::new(1.0f32, 0.0f32, 0.0f32);
 
+    commands.spawn(AudioBundle {
+        source: asset_server.load(format!("audio/hackyattacz2.wav")),
+        settings: PlaybackSettings{
+            mode: bevy::audio::PlaybackMode::Loop,
+            volume: bevy::audio::Volume::Relative(VolumeLevel::new(0.25)),
+            ..default()
+        },
+        ..default()
+    });
+
     commands.spawn((
         AudioBundle {
             source: asset_server.load(format!("audio/Engine.wav")),
             settings: PlaybackSettings {
                 mode: bevy::audio::PlaybackMode::Loop,
+                volume: bevy::audio::Volume::Relative(VolumeLevel::new(0.5)),
                 ..default()
             },
             ..default()
