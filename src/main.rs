@@ -28,6 +28,8 @@ fn main() {
 
         .init_resource::<Game>()
 
+        .insert_resource(ClearColor(Color::rgb(0.1, 0.5, 0.8)))
+
         .add_plugins(DefaultPlugins.set(
             WindowPlugin {
                 primary_window: Some(Window { 
