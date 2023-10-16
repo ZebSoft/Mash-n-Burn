@@ -18,14 +18,24 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
     .spawn(NodeBundle {
         style: Style {
-            display: Display::Flex,
             width: Val::Percent(100.0),
             height: Val::Percent(100.0),
-            justify_content: JustifyContent::SpaceEvenly,
-            flex_direction: FlexDirection::Column,
             ..default()
         },
         ..default()
+    })
+    .with_children(|parent| {
+        parent.spawn((NodeBundle {
+            style: Style {
+                position_type: PositionType::Absolute,
+                width: Val::Percent(100.0),
+                height: Val::Percent(100.0),
+                ..default()
+            },
+            background_color: Color::WHITE.into(),
+            ..default()
+        }
+        ,UiImage::new(asset_server.load("images/bg-1.png"))));
     })
     .with_children(|parent| {
         parent.spawn(NodeBundle{
@@ -33,24 +43,15 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 display: Display::Flex,
                 width: Val::Percent(100.0),
                 height: Val::Percent(100.0),
-                // position_type: PositionType::Absolute,
                 align_items: AlignItems::Center,
                 justify_content: JustifyContent::SpaceEvenly,
                 flex_direction: FlexDirection::Column,
                 ..default()
             },
             ..default()
-        })
+        },
+    )
         .with_children(|parent|{
-            parent.spawn(TextBundle::from_section(
-                "Mash'n'Burn", 
-                TextStyle {
-                    font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                    font_size: 60.0,
-                    color: Color::rgb(0.9, 0.9, 0.9),
-                    ..default()
-                }
-            ));
             parent.spawn(ButtonBundle {
                 style: Style {
                     width: Val::Px(150.0),
@@ -70,7 +71,7 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 parent.spawn(TextBundle::from_section(
                     "Button",
                     TextStyle {
-                        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                        font: asset_server.load("fonts/Blazed.ttf"),
                         font_size: 40.0,
                         color: Color::rgb(0.9, 0.9, 0.9),
                     },

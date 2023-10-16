@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::entities::{Game, Score, CarSoundMarker, Cointext, Besttext, MashMeterText};
+use crate::entities::{Game, Score, CarSoundMarker, Scoretext, Besttext, MashMeterText};
 
 pub fn update (mut game: ResMut<Game>, time: Res<Time>, mut score: ResMut<Score>, car_sound_controller: Query<&AudioSink, With<CarSoundMarker>>){
     game.time_tracker_counter += time.delta_seconds();
@@ -25,12 +25,12 @@ pub fn update (mut game: ResMut<Game>, time: Res<Time>, mut score: ResMut<Score>
 
 pub fn scoreboard(
     score: Res<Score>,
-    mut score_query: Query<(&mut Text, With<Cointext>, Without<Besttext>, Without<MashMeterText>)>,
-    mut best_query: Query<(&mut Text, With<Besttext>, Without<Cointext>, Without<MashMeterText>)>,
-    mut mash_query: Query<(&mut Text, With<MashMeterText>, Without<Besttext>, Without<Cointext>)>
+    mut score_query: Query<(&mut Text, With<Scoretext>, Without<Besttext>, Without<MashMeterText>)>,
+    mut best_query: Query<(&mut Text, With<Besttext>, Without<Scoretext>, Without<MashMeterText>)>,
+    mut mash_query: Query<(&mut Text, With<MashMeterText>, Without<Besttext>, Without<Scoretext>)>
 ) {
     let (mut score_text, _, _, _) = score_query.single_mut();
-    score_text.sections[0].value = format!("Coin: {}", score.value);
+    score_text.sections[0].value = format!("Score: {}", score.value);
 
     
     let (mut best_text, _, _, _) = best_query.single_mut();

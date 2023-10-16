@@ -22,6 +22,19 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         ..default()
     })
     .with_children(|parent| {
+        parent.spawn((NodeBundle {
+            style: Style {
+                position_type: PositionType::Absolute,
+                width: Val::Percent(100.0),
+                height: Val::Percent(100.0),
+                ..default()
+            },
+            background_color: Color::WHITE.into(),
+            ..default()
+        }
+        ,UiImage::new(asset_server.load("images/bg-simple.png"))));
+    })
+    .with_children(|parent| {
         parent.spawn(NodeBundle{
             style: Style {
                 display: Display::Flex,
@@ -30,6 +43,12 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 align_items: AlignItems::Center,
                 justify_content: JustifyContent::SpaceEvenly,
                 flex_direction: FlexDirection::Column,
+                padding: UiRect {
+                    left: Val::Px(20.0),
+                    right: Val::Px(20.0),
+                    top: Val::Px(20.0),
+                    bottom: Val::Px(20.0),
+                },
                 ..default()
             },
             ..default()
@@ -38,17 +57,17 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
             parent.spawn(TextBundle::from_section(
                 "Your pedal has broken, and your car is out of control! 
                 \n\nDodge the potato people for as long as you can, as when your mash meter fills up, you will be tried at court for mash murder! 
-                \n\nBe on the lookout for sweet potatoes too, as they will forgive you for your sins agaist mash kind!", 
+                \n\nBe on the lookout for sweet potatoes too, as they will forgive you for your sins against mash kind!", 
                 TextStyle {
-                    font: asset_server.load("fonts/NunitoSans.ttf"),
+                    font: asset_server.load("fonts/NunitoSans_Regular.ttf"),
                     font_size: 30.0,
-                    color: Color::rgb(0.9, 0.9, 0.9),
+                    color: Color::rgb(0.1, 0.1, 0.1),
                     ..default()
                 }
             ).with_text_alignment(TextAlignment::Center));
             parent.spawn(ButtonBundle {
                 style: Style {
-                    width: Val::Px(150.0),
+                    width: Val::Px(300.0),
                     height: Val::Px(65.0),
                     border: UiRect::all(Val::Px(5.0)),
                     // horizontally center child text
@@ -65,7 +84,7 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 parent.spawn(TextBundle::from_section(
                     "Button",
                     TextStyle {
-                        font: asset_server.load("fonts/FiraSans-Bold.ttf"),
+                        font: asset_server.load("fonts/Blazed.ttf"),
                         font_size: 40.0,
                         color: Color::rgb(0.9, 0.9, 0.9),
                     },
@@ -96,13 +115,13 @@ pub fn button_system(
         let mut text = text_query.get_mut(children[0]).unwrap();
         match *interaction {
             Interaction::Pressed => {
-                text.sections[0].value = "LETS GO".to_string();
+                text.sections[0].value = "Lets Go!".to_string();
                 *color = PRESSED_BUTTON.into();
                 border_color.0 = Color::RED;
                 next_state.set(GameState::Playing);
             }
             Interaction::Hovered => {
-                text.sections[0].value = "LETS GO".to_string();
+                text.sections[0].value = "Lets Go!".to_string();
                 *color = HOVERED_BUTTON.into();
                 border_color.0 = Color::WHITE;
             }

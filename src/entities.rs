@@ -22,7 +22,7 @@ impl Default for Potato {
 }
 
 #[derive(Component)]
-pub struct Cointext;
+pub struct Scoretext;
 
 #[derive(Component)]
 pub struct Besttext;

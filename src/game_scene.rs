@@ -1,4 +1,4 @@
-use crate::entities::{self, Besttext, CarSoundMarker, Potato, Cointext, Game, Player, MashMeterText, Score};
+use crate::entities::{self, Besttext, CarSoundMarker, Potato, Scoretext, Game, Player, MashMeterText, Score};
 
 use bevy::{prelude::*, audio::VolumeLevel};
 use rand::{distributions::Uniform, prelude::Distribution, Rng};
@@ -131,7 +131,7 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>,
                 .insert(Street)
                 .push_children(&children_list);
         }
-        // coin
+        
         if j < -1 {
             let ran_street = die.sample(&mut rng);
             
@@ -177,11 +177,11 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>,
     commands
         .spawn(TextBundle {
             text: Text::from_section(
-                "Coin:",
+                "Score:",
                 TextStyle {
-                    font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                    font_size: 40.0,
-                    color: Color::rgb(0.5, 0.5, 1.0),
+                    font: asset_server.load("fonts/Blazed.ttf"),
+                    font_size: 30.0,
+                    color: Color::rgb(0.9, 0.9, 0.9),
                     ..default()
                 },
             ),
@@ -193,16 +193,16 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>,
             },
             ..default()
         })
-        .insert(Cointext);
+        .insert(Scoretext);
 
     commands
         .spawn(TextBundle {
             text: Text::from_section(
                 "Best:",
                 TextStyle {
-                    font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                    font_size: 40.0,
-                    color: Color::rgb(0.5, 0.5, 1.0),
+                    font: asset_server.load("fonts/Blazed.ttf"),
+                    font_size: 30.0,
+                    color: Color::rgb(1.0, 0.9, 0.0),
                     ..default()
                 },
             ),
@@ -218,18 +218,18 @@ pub fn setup(mut commands: Commands, asset_server: Res<AssetServer>,
 
         commands.spawn(TextBundle {
             text: Text::from_section(
-                "MashoMeter:",
+                "Mash-o-Meter:",
                 TextStyle {
-                    font: asset_server.load("fonts/FiraSans-Bold.ttf"),
-                    font_size: 40.0,
-                    color: Color::rgb(0.5, 0.5, 1.0),
+                    font: asset_server.load("fonts/Blazed.ttf"),
+                    font_size: 30.0,
+                    color: Color::rgb(1.0, 0.8, 0.5),
                     ..default()
                 },
-            ),
+            ).with_alignment(TextAlignment::Center),
             style: Style {
                 position_type: PositionType::Absolute,
-                top: Val::Px(35.0),
-                left: Val::Px(5.0),
+                top: Val::Px(50.0),
+                left: Val::Px(60.0),
                 ..default()
             },
             ..default()
