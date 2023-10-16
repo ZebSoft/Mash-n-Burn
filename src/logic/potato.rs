@@ -1,4 +1,4 @@
-use bevy::{prelude::*, audio::VolumeLevel};
+use bevy::{audio::VolumeLevel, prelude::*};
 use rand::Rng;
 
 use crate::{entities::*, GameState};
@@ -15,7 +15,7 @@ pub fn update(
     for (entity, mut transform) in position.iter_mut() {
         transform.translation = transform.translation
             + Vec3::new(0.0, 0.0, 1.0) * game.street_speed * time.delta_seconds();
-        
+
         if transform.translation.z >= 1.0 {
             commands.entity(entity).despawn_recursive();
         }
@@ -27,7 +27,11 @@ pub fn update(
 
                 commands.spawn(AudioBundle {
                     source: asset_server.load(format!("audio/Passing{random_passing_sound}.ogg")),
-                    settings: PlaybackSettings::ONCE,
+                    settings: PlaybackSettings {
+                        mode: bevy::audio::PlaybackMode::Once,
+                        volume: bevy::audio::Volume::Relative(VolumeLevel::new(0.6)),
+                        ..default()
+                    },
                     ..default()
                 });
             }
@@ -43,12 +47,11 @@ pub fn check_collision(
     asset_server: Res<AssetServer>,
     mut game: ResMut<Game>,
     mut next_state: ResMut<NextState<GameState>>,
-    time: Res<Time>
+    time: Res<Time>,
 ) {
     let mut rng = rand::thread_rng();
     let (player_transfrom, _) = player_position.single();
     for (entity, mut transform, mut potato) in position.iter_mut() {
-
         potato.has_been_alive_for += time.delta_seconds();
         transform.translation.y = 0.5f32 + potato.has_been_alive_for.sin() / 5.0f32;
 
@@ -63,15 +66,14 @@ pub fn check_collision(
 
                     commands.spawn(AudioBundle {
                         source: asset_server.load(format!("audio/SweetPotato.ogg")),
-                        settings: PlaybackSettings{
+                        settings: PlaybackSettings {
                             mode: bevy::audio::PlaybackMode::Once,
                             volume: bevy::audio::Volume::Relative(VolumeLevel::new(3.0)),
                             ..default()
                         },
                         ..default()
-                    });                    
-                }
-                else {
+                    });
+                } else {
                     score.mash_meter_counter += 1;
 
                     if score.mash_meter_counter > 10 {
@@ -79,10 +81,14 @@ pub fn check_collision(
                     }
 
                     let rnd = rng.gen_range(1..=5);
-    
+
                     commands.spawn(AudioBundle {
                         source: asset_server.load(format!("audio/Hit{rnd}.ogg")),
-                        settings: PlaybackSettings::ONCE,
+                        settings: PlaybackSettings {
+                            mode: bevy::audio::PlaybackMode::Once,
+                            volume: bevy::audio::Volume::Relative(VolumeLevel::new(0.6)),
+                            ..default()
+                        },
                         ..default()
                     });
                 }
