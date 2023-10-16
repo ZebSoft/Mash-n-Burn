@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, audio::VolumeLevel};
 use rand::Rng;
 
 use crate::entities::*;
