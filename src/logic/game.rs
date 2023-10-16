@@ -39,7 +39,7 @@ pub fn show_text(mut commands: Commands, asset_server: Res<AssetServer>) {
                     TextStyle {
                         font: asset_server.load("fonts/NunitoSans_Bold.ttf"),
                         font_size: 40.0,
-                        color: Color::rgb(0.1, 0.1, 0.1),
+                        color: Color::rgb(0.9, 0.9, 0.9),
                         ..default()
                     },
                 )
