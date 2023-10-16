@@ -53,7 +53,7 @@ pub fn gameover_keyboard(
     mut next_state: ResMut<NextState<GameState>>,
     keyboard_input: Res<Input<KeyCode>>,
     mut commands: Commands, 
-    entities:  Query<Entity, Or<(With<Node>, With<Camera3d>, With<AudioSink>, With<Obstacle>, With<Player>, With<PointLight>)>>
+    entities:  Query<Entity, Or<(With<Node>, With<Camera3d>, With<AudioSink>, With<Obstacle>, With<Player>, With<PointLight>, With<Transform>, With<Street>, With<Obstacle>, With<Potato>)>>
 ) {
     if !keyboard_input.just_pressed(KeyCode::Space) {
         return;
