@@ -66,7 +66,11 @@ pub fn check_collision(
 
                     commands.spawn(AudioBundle {
                         source: asset_server.load(format!("audio/SweetPotato.ogg")),
-                        settings: PlaybackSettings::ONCE,
+                        settings: PlaybackSettings {
+                            mode: bevy::audio::PlaybackMode::Once,
+                            volume: bevy::audio::Volume::Relative(VolumeLevel::new(3.0)),
+                            ..default()
+                        },
                         ..default()
                     });
                 } else {
