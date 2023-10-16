@@ -4,6 +4,7 @@ mod explanation_scene;
 mod entities;
 mod logic;
 
+use wasm_bindgen::prelude::*;
 use bevy::prelude::{*, IntoSystemConfigs};
 use bevy::time::common_conditions::on_timer;
 use std::time::Duration;
@@ -20,7 +21,9 @@ pub enum GameState {
     GameOver,
 }
 
-fn main() {
+#[cfg_attr(target_arch = "wasm32",
+           wasm_bindgen::prelude::wasm_bindgen(start))]
+pub fn main() {
     App::new()
         //add config resources
         .insert_resource(Msaa::default())
